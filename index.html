@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Requisition Form | Space Copy</title>
+<meta name="description" content="Submit project requirements to Space Copy for custom parts, feedstock production, AERIS systems, and digital twin services.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1b2a80;
+    --navy-deep: #0f1a55;
+    --ink: #2f3237;
+    --muted: #6a6f78;
+    --line: #d9dce3;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --soft: #eef0f9;
+    --error: #b42318;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1, h2, legend, .eyebrow, .btn, .subhead, .wordmark { font-family: "Roboto Condensed", Roboto, sans-serif; }
+
+  .hero { background: var(--navy-deep); color: #fff; padding: 48px 16px 88px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; margin-bottom: 40px; min-height: 44px; }
+  .brand img { height: 44px; width: auto; }
+  .wordmark { font-weight: 700; font-size: 26px; letter-spacing: .5px; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; color: #b9c1ea; margin: 0 0 10px; }
+  h1 { font-weight: 400; font-size: clamp(32px, 5vw, 46px); line-height: 1.1; margin: 0 0 16px; }
+  .lede { max-width: 640px; color: #d8dcf0; margin: 0; }
+
+  main { margin-top: -48px; padding: 0 16px 64px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { display: flex; align-items: baseline; gap: 12px; font-size: 23px; font-weight: 500; color: var(--navy); padding: 0; margin-bottom: 4px; }
+  legend .num { font-size: 14px; color: var(--muted); letter-spacing: .1em; }
+  .section-note { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; }
+  .full { grid-column: 1 / -1; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .card { padding: 20px; } }
+
+  .label { display: block; font-weight: 500; font-size: 14px; margin-bottom: 6px; }
+  .req { color: var(--error); margin-left: 2px; }
+  .hint { display: block; font-size: 13px; color: var(--muted); margin-top: 5px; }
+  input[type=text], input[type=email], input[type=tel], input[type=url], input[type=number], select, textarea {
+    width: 100%; font: inherit; color: inherit; background: #fff; border: 1px solid var(--line);
+    border-radius: 8px; padding: 10px 12px; transition: border-color .15s, box-shadow .15s;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27, 42, 128, .15); }
+
+  .group-label { font-weight: 500; font-size: 14px; margin: 0 0 8px; }
+  .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+  .choice { display: flex; align-items: flex-start; gap: 9px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font-size: 15px; line-height: 1.35; background: #fff; }
+  .choice:hover { border-color: #aab1cc; }
+  .choice input { margin: 2px 0 0; accent-color: var(--navy); flex: none; }
+  .choice:has(input:checked) { border-color: var(--navy); background: var(--soft); }
+  .subhead { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 13px; color: var(--navy); margin: 20px 0 8px; }
+  .subhead:first-of-type { margin-top: 0; }
+  .hidden { display: none !important; }
+
+  .dropzone { border: 2px dashed var(--line); border-radius: var(--radius); padding: 28px 16px; text-align: center; background: #fafbfc; cursor: pointer; transition: .15s; }
+  .dropzone.drag { border-color: var(--navy); background: var(--soft); }
+  .dropzone.disabled { opacity: .5; cursor: not-allowed; }
+  .dropzone strong { color: var(--navy); }
+  .file-list { list-style: none; margin: 12px 0 0; padding: 0; }
+  .file-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; margin-top: 6px; font-size: 14px; word-break: break-all; }
+  .file-list button { border: 0; background: none; color: var(--error); cursor: pointer; font: inherit; flex: none; }
+
+  .notice { border-left: 4px solid #c9a227; background: #fff8e6; padding: 12px 14px; border-radius: 6px; font-size: 14px; }
+  .error-msg { color: var(--error); font-size: 13px; margin-top: 6px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 8px; }
+  .btn { appearance: none; border: 0; background: var(--navy); color: #fff; font-size: 17px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; padding: 14px 28px; border-radius: 8px; cursor: pointer; }
+  .btn:hover { background: var(--navy-deep); }
+  .btn:disabled { opacity: .6; cursor: progress; }
+  .status { font-size: 15px; }
+  .status.err { color: var(--error); }
+
+  .success { text-align: center; padding: 48px 28px; }
+  .success h2 { font-size: 30px; font-weight: 400; margin: 0 0 10px; color: var(--navy); }
+  .ref { display: inline-block; font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--soft); padding: 6px 12px; border-radius: 6px; margin: 8px 0 16px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 40px; }
+  footer a { color: var(--navy); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <!-- Place your logo file next to this page as logo.png. The text wordmark shows if it is missing. -->
+      <img src="logo.png" alt="Space Copy" onerror="this.outerHTML='<span class=&quot;wordmark&quot;>Space Copy</span>'">
+    </div>
+    <p class="eyebrow">Customer Requisition</p>
+    <h1>Project Requisition Form</h1>
+    <p class="lede">Submit your requirements for custom parts, filament or pellet production, AERIS systems, or digital twin services. The Space Copy technical team reviews each request and follows up by email.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div id="config-warning" class="card notice hidden">
+      <strong>Setup required:</strong> no submission endpoint is configured. Set <code>CONFIG.ENDPOINT</code> in this file before sharing the link. See README.md.
+    </div>
+
+    <form id="req-form" novalidate>
+
+      <!-- 01 CONTACT -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">01</span>Contact Information</legend>
+          <p class="section-note">Fields marked <span class="req">*</span> are required.</p>
+          <div class="grid">
+            <label><span class="label">Full name<span class="req">*</span></span>
+              <input type="text" name="full_name" autocomplete="name" required></label>
+            <label><span class="label">Job title</span>
+              <input type="text" name="title" autocomplete="organization-title"></label>
+            <label><span class="label">Organization<span class="req">*</span></span>
+              <input type="text" name="organization" autocomplete="organization" required></label>
+            <label><span class="label">Organization website</span>
+              <input type="url" name="website" placeholder="https://"></label>
+            <label><span class="label">Email<span class="req">*</span></span>
+              <input type="email" name="email" autocomplete="email" required></label>
+            <label><span class="label">Phone</span>
+              <input type="tel" name="phone" autocomplete="tel"></label>
+            <label><span class="label">Country<span class="req">*</span></span>
+              <input type="text" name="country" autocomplete="country-name" required></label>
+            <label><span class="label">City and state / province</span>
+              <input type="text" name="region_city" autocomplete="address-level2"></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 02 PROJECT -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">02</span>Project Overview</legend>
+          <p class="section-note">Describe what you need produced and the services you are requesting.</p>
+          <div class="grid">
+            <label><span class="label">Project name<span class="req">*</span></span>
+              <input type="text" name="project_title" required></label>
+            <label><span class="label">Sector<span class="req">*</span></span>
+              <select name="sector" required>
+                <option value="">Select a sector</option>
+                <option>Space</option>
+                <option>Defense</option>
+                <option>Energy</option>
+                <option>Mining</option>
+                <option>Construction / infrastructure</option>
+                <option>Research / academic</option>
+                <option>Government (non-defense)</option>
+                <option>Other</option>
+              </select></label>
+            <label id="wrap-sector-other" class="full hidden"><span class="label">Specify sector</span>
+              <input type="text" name="sector_other"></label>
+            <div class="full">
+              <p class="group-label">Services requested<span class="req">*</span></p>
+              <div class="choices" data-group="services"></div>
+              <p class="error-msg hidden" id="services-error">Select at least one service.</p>
+            </div>
+            <label class="full"><span class="label">Project description<span class="req">*</span></span>
+              <textarea name="project_description" required placeholder="What problem are you solving, where will the parts be used, and what does success look like?"></textarea></label>
+            <label class="full"><span class="label">Parts or items required</span>
+              <textarea name="part_types" placeholder="Example: replacement brackets, M8 fasteners, pipe fittings, tooling jigs"></textarea></label>
+            <label><span class="label">Quantity</span>
+              <input type="text" name="quantity" placeholder="Example: 50 units, or 10 kg filament"></label>
+            <label><span class="label">Required timeline</span>
+              <select name="timeline">
+                <option value="">Select</option>
+                <option>Within 1 month</option>
+                <option>1 to 3 months</option>
+                <option>3 to 6 months</option>
+                <option>6 to 12 months</option>
+                <option>More than 12 months</option>
+                <option>Exploratory / no fixed date</option>
+              </select></label>
+            <label><span class="label">Budget range (USD)</span>
+              <select name="budget">
+                <option value="">Select</option>
+                <option>Under $10K</option>
+                <option>$10K to $50K</option>
+                <option>$50K to $250K</option>
+                <option>$250K to $1M</option>
+                <option>Over $1M</option>
+                <option>Not yet defined</option>
+              </select></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 03 ENVIRONMENT -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">03</span>Operating Environment</legend>
+          <p class="section-note">Where the printed parts or the system will operate.</p>
+          <div class="grid">
+            <div class="full">
+              <p class="group-label">Deployment environment</p>
+              <div class="choices" data-group="environments"></div>
+            </div>
+            <label><span class="label">Minimum operating temperature (°C)</span>
+              <input type="number" name="temp_min" step="any"></label>
+            <label><span class="label">Maximum operating temperature (°C)</span>
+              <input type="number" name="temp_max" step="any"></label>
+            <label class="full"><span class="label">Performance requirements</span>
+              <textarea name="performance_requirements" placeholder="Loads, tolerances, surface finish, radiation exposure, chemical exposure, applicable standards or certifications"></textarea></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 04 PROCESS AND FEEDSTOCK -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">04</span>Process and Feedstock</legend>
+          <p class="section-note">AERIS uses FDM/FFF. LUMINAR uses SLS/SLM. Select "Not sure" and our team will recommend a process.</p>
+          <div class="grid">
+            <div class="full">
+              <p class="group-label">Manufacturing process</p>
+              <div class="choices" data-group="process"></div>
+            </div>
+            <div class="full">
+              <p class="group-label">Feedstock format<span class="req">*</span></p>
+              <div class="choices" data-group="feedstock_format" data-required></div>
+            </div>
+            <div class="full hidden" id="wrap-diameter">
+              <p class="group-label">Filament diameter</p>
+              <div class="choices" data-group="filament_diameter"></div>
+            </div>
+            <div class="full">
+              <p class="group-label">Material source</p>
+              <div class="choices" data-group="material_source"></div>
+            </div>
+            <label id="wrap-material-qty" class="full hidden"><span class="label">Quantity and form of material you will supply</span>
+              <input type="text" name="customer_material_qty" placeholder="Example: 15 kg crushed basalt, under 2 mm particle size">
+              <span class="hint">Feedstock development typically requires 5 to 20 kg of source material.</span></label>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 05 MATERIALS -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">05</span>Materials</legend>
+          <p class="section-note">Select all materials of interest. Leave blank if you need a recommendation.</p>
+          <p class="subhead">Polymers</p>
+          <div class="choices" data-group="materials_polymers"></div>
+          <p class="subhead">Metals</p>
+          <div class="choices" data-group="materials_metals"></div>
+          <p class="subhead">Ceramics</p>
+          <div class="choices" data-group="materials_ceramics"></div>
+          <p class="subhead">ISRU / Custom Infill</p>
+          <div class="choices" data-group="materials_isru"></div>
+          <label style="display:block;margin-top:18px"><span class="label">Other or proprietary materials</span>
+            <textarea name="materials_other" placeholder="Material name, composition, particle size, source, and any safety data sheet notes"></textarea></label>
+        </fieldset>
+      </section>
+
+      <!-- 06 CAD -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">06</span>CAD and Technical Data</legend>
+          <div class="grid">
+            <div class="full">
+              <p class="group-label">Is this project or its technical data subject to ITAR or EAR export controls?<span class="req">*</span></p>
+              <div class="choices" data-group="export_control" data-required></div>
+            </div>
+            <div class="full hidden" id="wrap-export-details">
+              <p class="notice">Do not upload export-controlled technical data through this form. File upload is disabled for this selection. Our team will contact you to arrange a compliant transfer.</p>
+              <label style="display:block;margin-top:12px"><span class="label">Classification details (optional, non-technical)</span>
+                <input type="text" name="export_details" placeholder="Example: ITAR Category XV, or EAR99"></label>
+            </div>
+            <div class="full">
+              <p class="group-label">Upload CAD files</p>
+              <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-describedby="file-hint">
+                <strong>Drag files here</strong> or click to browse
+                <span class="hint" id="file-hint">STL, STEP, 3MF, OBJ, IGES, Parasolid, SLDPRT, F3D, DXF, PDF, or ZIP. Up to <span id="max-file"></span> MB per file, <span id="max-total"></span> MB total.</span>
+              </div>
+              <input type="file" id="file-input" multiple class="hidden"
+                accept=".stl,.step,.stp,.3mf,.obj,.iges,.igs,.x_t,.x_b,.sldprt,.sldasm,.f3d,.dxf,.dwg,.pdf,.zip">
+              <ul class="file-list" id="file-list"></ul>
+              <p class="error-msg hidden" id="file-error"></p>
+            </div>
+            <label class="full"><span class="label">Or share a link to larger files</span>
+              <input type="url" name="cad_link" placeholder="Google Drive, OneDrive, Dropbox, Onshape, or similar">
+              <span class="hint">Set link sharing so that info@spacecopy.com can view the files.</span></label>
+            <label class="full"><span class="label">Design notes</span>
+              <textarea name="cad_notes" placeholder="Units, critical dimensions, infill requirements, orientation constraints, revisions"></textarea></label>
+            <div class="full">
+              <label class="choice" style="max-width:520px"><input type="checkbox" name="nda_required" value="Yes"><span>An NDA is required before we share further technical data</span></label>
+            </div>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- 07 DELIVERY AND SUBMIT -->
+      <section class="card">
+        <fieldset>
+          <legend><span class="num">07</span>Delivery and Submission</legend>
+          <div class="grid">
+            <label><span class="label">Delivery location</span>
+              <input type="text" name="delivery_location" placeholder="City, country, or site name"></label>
+            <label><span class="label">How did you hear about Space Copy?</span>
+              <select name="referral">
+                <option value="">Select</option>
+                <option>Conference or event</option>
+                <option>NASA program or challenge</option>
+                <option>Referral from a partner</option>
+                <option>LinkedIn</option>
+                <option>Media coverage</option>
+                <option>Search engine</option>
+                <option>Other</option>
+              </select></label>
+            <label class="full"><span class="label">Additional comments</span>
+              <textarea name="comments"></textarea></label>
+            <div class="full">
+              <label class="choice"><input type="checkbox" name="consent" value="Yes" required>
+                <span>I agree that Space Copy may store the information in this form and use it to respond to this request.<span class="req">*</span></span></label>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Spam trap: hidden from people, filled in by bots -->
+        <div class="hp" aria-hidden="true">
+          <label>Leave this field empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn" id="submit-btn">Submit Requisition</button>
+          <span class="status" id="status" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+    </form>
+
+    <section class="card success hidden" id="success" tabindex="-1">
+      <h2>Requisition received</h2>
+      <p>Your reference number is:</p>
+      <div class="ref" id="success-ref"></div>
+      <p>The Space Copy technical team will contact you at <strong id="success-email"></strong>.<br>
+      For questions, email <a href="mailto:info@spacecopy.com">info@spacecopy.com</a> and include your reference number.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  Space Copy &nbsp;|&nbsp; <a href="mailto:info@spacecopy.com">info@spacecopy.com</a> &nbsp;|&nbsp;
+  <a href="https://www.linkedin.com/company/spacecopy/" target="_blank" rel="noopener">LinkedIn</a>
+</footer>
+
+<script>
+/* =========================================================================
+   CONFIGURATION
+   BACKEND: "apps-script" (Google Sheet + Drive + email, free; see README)
+            "formspree"   (hosted form service; file uploads need a paid plan)
+   ENDPOINT: the Apps Script web app URL or the Formspree form URL.
+   ========================================================================= */
+const CONFIG = {
+  BACKEND: "apps-script",
+  ENDPOINT: "",
+  MAX_FILE_MB: 10,
+  MAX_TOTAL_MB: 25,
+  CONTACT_EMAIL: "info@spacecopy.com",
+};
+
+/* Option lists. Edit these arrays to change the choices shown on the form. */
+const GROUPS = {
+  services: { type: "checkbox", options: [
+    "Custom part printing (3DaaS)",
+    "Custom filament or pellet production",
+    "AERIS FDM/FFF system purchase or lease",
+    "LUMINAR SLS/SLM manufacturing",
+    "AERIMS digital twin / MBSE simulation",
+    "CAD design support",
+    "Performance simulation",
+    "Mechanical test and evaluation",
+  ]},
+  environments: { type: "checkbox", options: [
+    "Ambient / laboratory",
+    "Arctic or cold region",
+    "Desert",
+    "Subsea or marine",
+    "Combat zone or forward operating base",
+    "Natural disaster area",
+    "Remote mining or construction site",
+    "Lunar surface",
+    "Low Earth orbit",
+    "Mars surface",
+    "Deep space",
+    "Other",
+  ]},
+  process: { type: "radio", options: [
+    "FDM/FFF (AERIS)",
+    "SLS/SLM (LUMINAR)",
+    "Not sure",
+  ]},
+  feedstock_format: { type: "radio", options: [
+    "Filament",
+    "Pellet",
+    "Filament or pellet",
+    "Not sure",
+  ]},
+  filament_diameter: { type: "radio", options: [
+    "1.75 mm",
+    "2.85 mm",
+    "Other",
+  ]},
+  material_source: { type: "radio", options: [
+    "Customer-supplied material",
+    "Space Copy in-house stock",
+    "Custom composite developed with Space Copy",
+    "Not sure",
+  ]},
+  materials_polymers: { type: "checkbox", options: [
+    "PLA", "PETG", "ABS/ASA", "PC/ABS blend", "Nylon PA6", "Nylon PA12",
+    "TPU", "Polypropylene (PP)", "HDPE", "PVDF", "PEEK",
+  ]},
+  materials_metals: { type: "checkbox", options: [
+    "Aluminum 6061", "Titanium Grade 23 (Ti-6Al-4V ELI)", "Stainless steel 316L",
+    "Stainless steel 17-4 PH", "Tool steel M300", "Tool steel H13", "Tool steel D2",
+    "Inconel 625", "Inconel 718", "Copper", "Bronze", "Tungsten", "Invar 36",
+  ]},
+  materials_ceramics: { type: "checkbox", options: [
+    "Zirconia ZrO2 (YSZ)", "Alumina Al2O3", "Silicon carbide SiC", "Silicon nitride Si3N4",
+    "Zircopax (ZrSiO4)", "Fused silica SiO2", "Boron carbide B4C", "Cordierite", "Basalt",
+  ]},
+  materials_isru: { type: "checkbox", options: [
+    "Lunar regolith simulant LHS-1", "Lunar regolith simulant LMS-1",
+    "Lunar regolith simulant OPRH2N", "Lunar regolith simulant OPRL2N",
+    "Lunar regolith simulant BP-1", "Martian simulant MGS-1", "Martian simulant JSC Mars-1A",
+    "Mine tailings", "Recycled mission waste (packaging, foam, textiles)",
+    "Carbon fiber (chopped)", "Carbon fiber (continuous)", "Glass fiber", "Aramid fiber",
+    "Graphene-enhanced infill", "PE / tungsten", "PE / boron nitride",
+  ]},
+  export_control: { type: "radio", options: ["No", "Yes", "Unknown"] },
+};
+
+const ALLOWED_EXT = ["stl","step","stp","3mf","obj","iges","igs","x_t","x_b","sldprt","sldasm","f3d","dxf","dwg","pdf","zip"];
+const DRAFT_KEY = "spacecopy-requisition-draft";
+
+const form = document.getElementById("req-form");
+const statusEl = document.getElementById("status");
+const submitBtn = document.getElementById("submit-btn");
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("file-input");
+const fileListEl = document.getElementById("file-list");
+const fileErrorEl = document.getElementById("file-error");
+let files = [];
+let uploadDisabled = false;
+
+/* ---------- Build checkbox and radio groups ---------- */
+document.querySelectorAll("[data-group]").forEach(container => {
+  const name = container.dataset.group;
+  const group = GROUPS[name];
+  if (!group) return;
+  group.options.forEach((label, i) => {
+    const wrap = document.createElement("label");
+    wrap.className = "choice";
+    const input = document.createElement("input");
+    input.type = group.type;
+    input.name = name;
+    input.value = label;
+    if (group.type === "radio" && container.hasAttribute("data-required") && i === 0) input.required = true;
+    const span = document.createElement("span");
+    span.textContent = label;
+    wrap.append(input, span);
+    container.append(wrap);
+  });
+});
+
+document.getElementById("max-file").textContent = CONFIG.MAX_FILE_MB;
+document.getElementById("max-total").textContent = CONFIG.MAX_TOTAL_MB;
+if (!CONFIG.ENDPOINT) document.getElementById("config-warning").classList.remove("hidden");
+
+/* ---------- Conditional fields ---------- */
+function checkedValue(name) {
+  const el = form.querySelector(`[name="${name}"]:checked`);
+  return el ? el.value : "";
+}
+function setVisible(id, show) {
+  const el = document.getElementById(id);
+  el.classList.toggle("hidden", !show);
+  el.querySelectorAll("input, select, textarea").forEach(i => { i.disabled = !show; });
+}
+function syncConditionals() {
+  setVisible("wrap-sector-other", form.elements.sector.value === "Other");
+  setVisible("wrap-diameter", ["Filament", "Filament or pellet"].includes(checkedValue("feedstock_format")));
+  setVisible("wrap-material-qty", checkedValue("material_source") === "Customer-supplied material");
+  const controlled = checkedValue("export_control") === "Yes";
+  setVisible("wrap-export-details", controlled);
+  setUploadDisabled(controlled);
+}
+form.addEventListener("change", syncConditionals);
+
+/* ---------- File handling ---------- */
+const MB = 1024 * 1024;
+function fmtSize(b) { return b >= MB ? (b / MB).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB"; }
+function showFileError(msg) { fileErrorEl.textContent = msg; fileErrorEl.classList.toggle("hidden", !msg); }
+
+function setUploadDisabled(disabled) {
+  uploadDisabled = disabled;
+  dropzone.classList.toggle("disabled", disabled);
+  dropzone.setAttribute("aria-disabled", String(disabled));
+  if (disabled && files.length) { files = []; renderFiles(); showFileError("Uploaded files were removed because export-controlled data was selected."); }
+}
+
+function addFiles(list) {
+  if (uploadDisabled) return;
+  const problems = [];
+  for (const f of list) {
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (!ALLOWED_EXT.includes(ext)) { problems.push(`${f.name}: file type not accepted`); continue; }
+    if (f.size > CONFIG.MAX_FILE_MB * MB) { problems.push(`${f.name}: exceeds ${CONFIG.MAX_FILE_MB} MB; share a link instead`); continue; }
+    if (files.some(x => x.name === f.name && x.size === f.size)) continue;
+    const total = files.reduce((s, x) => s + x.size, 0) + f.size;
+    if (total > CONFIG.MAX_TOTAL_MB * MB) { problems.push(`${f.name}: total upload would exceed ${CONFIG.MAX_TOTAL_MB} MB; share a link instead`); continue; }
+    files.push(f);
+  }
+  showFileError(problems.join(". "));
+  renderFiles();
+}
+
+function renderFiles() {
+  fileListEl.innerHTML = "";
+  files.forEach((f, i) => {
+    const li = document.createElement("li");
+    const name = document.createElement("span");
+    name.textContent = `${f.name} (${fmtSize(f.size)})`;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Remove";
+    btn.addEventListener("click", () => { files.splice(i, 1); renderFiles(); showFileError(""); });
+    li.append(name, btn);
+    fileListEl.append(li);
+  });
+}
+
+dropzone.addEventListener("click", () => { if (!uploadDisabled) fileInput.click(); });
+dropzone.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && !uploadDisabled) { e.preventDefault(); fileInput.click(); } });
+fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+["dragenter", "dragover"].forEach(t => dropzone.addEventListener(t, e => { e.preventDefault(); if (!uploadDisabled) dropzone.classList.add("drag"); }));
+["dragleave", "drop"].forEach(t => dropzone.addEventListener(t, e => { e.preventDefault(); dropzone.classList.remove("drag"); }));
+dropzone.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+
+/* ---------- Serialization ---------- */
+function serialize() {
+  const data = {};
+  for (const [k, v] of new FormData(form).entries()) {
+    if (v instanceof File) continue;
+    if (k in data) data[k] = [].concat(data[k], v); else data[k] = v;
+  }
+  Object.keys(GROUPS).forEach(k => {
+    if (GROUPS[k].type === "checkbox") data[k] = data[k] === undefined ? [] : [].concat(data[k]);
+  });
+  return data;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve({ name: file.name, type: file.type || "application/octet-stream", size: file.size, data: String(r.result).split(",")[1] });
+    r.onerror = () => reject(new Error(`Could not read ${file.name}`));
+    r.readAsDataURL(file);
+  });
+}
+
+function makeReference() {
+  const d = new Date();
+  const ymd = d.getUTCFullYear() + String(d.getUTCMonth() + 1).padStart(2, "0") + String(d.getUTCDate()).padStart(2, "0");
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `SC-REQ-${ymd}-${rand}`;
+}
+
+/* ---------- Draft autosave (text fields only, this browser only) ---------- */
+let saveTimer;
+form.addEventListener("input", () => {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { const d = serialize(); delete d._gotcha; localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (e) {}
+  }, 400);
+});
+function restoreDraft() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch (e) {}
+  if (!d) return;
+  Object.entries(d).forEach(([k, val]) => {
+    form.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el => {
+      if (el.type === "checkbox" || el.type === "radio") el.checked = [].concat(val).includes(el.value);
+      else el.value = val;
+    });
+  });
+}
+function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+
+/* ---------- Submit ---------- */
+function setStatus(msg, isError) { statusEl.textContent = msg; statusEl.classList.toggle("err", !!isError); }
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  setStatus("");
+  const servicesErr = document.getElementById("services-error");
+  const data = serialize();
+  const noService = data.services.length === 0;
+  servicesErr.classList.toggle("hidden", !noService);
+
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+  if (noService) { servicesErr.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+
+  const ref = makeReference();
+  if (data._gotcha) { showSuccess(ref, data.email); return; }
+  delete data._gotcha;
+
+  if (!CONFIG.ENDPOINT) { setStatus("This form is not connected yet. Please email " + CONFIG.CONTACT_EMAIL + ".", true); return; }
+
+  submitBtn.disabled = true;
+  setStatus(files.length ? "Uploading files and submitting..." : "Submitting...");
+
+  try {
+    data.reference_id = ref;
+    data.page_url = location.href;
+
+    if (CONFIG.BACKEND === "apps-script") {
+      data.files = await Promise.all(files.map(fileToBase64));
+      const res = await fetch(CONFIG.ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data),
+      });
+      const out = await res.json();
+      if (!out.ok) throw new Error(out.error || "Submission rejected");
+    } else {
+      const fd = new FormData();
+      Object.entries(data).forEach(([k, v]) => fd.append(k, Array.isArray(v) ? v.join("; ") : v));
+      fd.append("_subject", `New requisition ${ref}: ${data.organization}`);
+      files.forEach(f => fd.append("cad_files", f, f.name));
+      const res = await fetch(CONFIG.ENDPOINT, { method: "POST", body: fd, headers: { Accept: "application/json" } });
+      if (!res.ok) {
+        let msg = "Submission rejected";
+        try { const j = await res.json(); if (j.errors) msg = j.errors.map(x => x.message).join(", "); } catch (_) {}
+        throw new Error(msg);
+      }
+    }
+
+    clearDraft();
+    showSuccess(ref, data.email);
+  } catch (err) {
+    console.error(err);
+    setStatus(`Submission failed (${err.message}). Please try again or email ${CONFIG.CONTACT_EMAIL} and quote ${ref}.`, true);
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+function showSuccess(ref, email) {
+  form.classList.add("hidden");
+  document.getElementById("config-warning").classList.add("hidden");
+  document.getElementById("success-ref").textContent = ref;
+  document.getElementById("success-email").textContent = email || "the email you provided";
+  const s = document.getElementById("success");
+  s.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  s.focus({ preventScroll: true });
+}
+
+restoreDraft();
+syncConditionals();
+</script>
+</body>
+</html>
